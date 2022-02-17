@@ -1,0 +1,144 @@
+
+--------------------------------------------------------------------------------
+Note: "[!]" Indicates a change that
+- changes the default behavior of RAZR or
+- might introduce incompatibilities with earlier versions.
+--------------------------------------------------------------------------------
+
+Revision 0.962 (Aug. 2021)
+===================
+* Maintenance fixes
+* HRTF databases can be persistent between function calls
+* Optional optimized absorption filter design
+* Additional examples
+
+
+Revision 0.95 (Mar. 2020, no public release)
+===================
+* Source directivity based on a simplified SHM based filter was added. 
+  By this, some new options were introduced. See EXAMPLE_SOURCE_DIR.M for 
+  details. 
+* Fixed: Specific fix for the MK2 HRTF database search path and options. 
+  op.hrtf_options.mk2_legacy_angle_conversion was added to default options.
+
+Known issues:
+-------------
+* FDN channel mapping may introduce coloration effects in rooms with a very 
+  short reverberation time.
+
+
+Revision 0.94 (Dec. 2018, no public release)
+===================
+* Loudspeaker-array rendering is supported now! By this, some new options were
+  introduced. See EXAMPLE_ARRAY.M for details and explanation.
+* Most analysis tools support input of ir vector now.
+* Different methods to specify room.materials can now be mixed for one room. See
+  help razr or example_abscoeff.m for details.
+* New function pink_pulse (to be used as analysis signal, e.g. as input for
+  apply_rir). soundir provides now the option to directly listen to the pink
+  filtered ir.
+* HRTF data are stored as persistent variables now in order not to load them
+  multiple times across calls of razr. They are only reloaded if
+  op.hrtf_database or op.hrtf_options change, or if the new option
+  op.force_loading_hrtf is set to true.
+* Headphone equalization for Sennheiser HD650 added (see razr_cfg_default.m for
+  details).
+* FDN delays can now be passed directly as a vector if desired. The option
+  fdn_mfactor was renamed to fdn_delay_stretch.
+* [!] Enabled backwards compatibility to former versions:
+  - If legacy options are detected, they are automatically translated to their
+    corresponding new ones.
+  - New functions "get_default_options_v<vers>" to run razr with the default
+    options of a former version <vers>
+  - RAZR's behavior from 2014 (status of JAES paper, see README) was fully
+    restored, and the function "get_default_options_2014" to obtain the
+    corresponding default options was completed and corrected.
+* [!] The distance-depending sound attenuation is now strictly 1/distance for
+  distance >= 1 meter. The smooth transition towards smaller distances was
+  removed. The old behavior can be restored via op.legacy_distce_atten = 1.
+
+Known issues:
+-------------
+* Absorption and reflection filters that are created internally might be
+  instable if room.freq contains 125 Hz. Set the options op.plot_absFilters = 1
+  and op.plot_reflFilters = 1 to check the created filters. In doubt, choose
+  frequencies >= 250 Hz.
+
+
+Revision 0.93 (Dec. 2017, no public release)
+=========================
+* Coupled rooms supported now. For details, see RAZR, EXAMPLE_COUPLED_ROOMS,
+  GET_COUPLED_ROOMS.
+* Improved documentation in several files.
+* [!] Syntax for wall material specification. Now a colon ":" is used as
+  separator, i.e., "dbase:material". The period symbol is not used longer to
+  prevent confusion with "struct.field" syntax. For details, see help razr.
+
+
+Revision 0.92 (Dec. 2017, no public release)
+============================================
+* [!] Fixed: Image source jitter is attenuated if it would cause an image source
+  being closer to the receiver than the direct sound source.
+* [!] op.ism_ISposRandFactor was replaced by op.ism_jitter_factor. Jittering now
+  depends on ISM order instead of img src distance to receiver.
+  op.ism_randFactorsInCart was renamed to op.ism_jitter_type and takes string
+  values now.
+* apply_rir: New parameters 'samples' and 'win'. See help apply_rir for details.
+* schroeder_rt: plots EDC automatically if nargout == 0.
+* [!] New handling of wall materials. Own databases for absorption coefficients
+  can now be created and used. For syntax see help razr.
+* [!] New handling of configuration. Several cfg files can be stored in parallel
+  now. The function select_razr_cfg picks the desired one. See doc of
+  "razr_cfg_default" and "select_razr_cfg" for details.
+* The SOFA format (sofaconventions.org) for HRTFs is supported now.
+* [!] New syntax for adding unsupported HRTF databases (non-SOFA format). See
+  README for details.
+* New functions: sop, smat. Search tools for option names and absorbing
+  materials, respectively.
+* ISM needs less memory now.
+* [!] RIR length is now specified in samples instead of seconds. Therefore, the
+  options "op.tlen" and "op.tlen_max" were replaced by new options "op.len" and
+  "op.len_max", respectively.
+* [!] The automatically chosen RIR length is now set to the maximum of
+  the estimated T60 over frequencies instead of the doubled maximum. However,
+  this behavior can be controlled using the new option "op.len_rt_factor".
+
+
+Revision 0.91 (Apr. 2017)
+=========================
+* New function plot_ispos to plot image source positions
+* The razr output "ism_data" now contains more fields
+* scene:
+    - Plots room even if srcpos/recpos/recdir are not existing
+    - Colors of sources and receivers can now be specified
+    - For multiple sources/receivers, labels have now the same color
+    - Structure of returned handles is more clear now
+* New function plot_freqrsp: Replaces plotFrqRsp
+* Some code cleanup and refactoring.
+* Some minor fixes
+* schroeder_rt:
+    - can plot the reverberation time against frequencies now
+    - new option to plot the linear EDC fit
+* [!] No random jitter on 1st-order img-src positions. New option to explicitly
+  control that threshold order: op.ism_rand_start_order.
+
+
+Revision 0.90 (Nov. 2016)
+=========================
+* New options for scene: hide_labels, labeloffset
+* Disabled tone correction filter on direct sound
+* Introduced spherical head model. The according new spat_mode 'shm' is now the
+  default instead of 'ild'
+* razr addpath/rmpath ignores .git folder now
+* razr_cfg is now only created for razr addpath (not rmpath)
+* "razr" is printed in lower case letters for razr short help
+* apply_hrtf: replaced feval by eval for calling scripts (warning in older
+  Matlab versions)
+
+
+Revision 0.11 (Oct. 2016)
+=========================
+* Simpler folder structure
+* Changed way of including unsupported HRTF databases (see README.txt)
+* Multiple sound sources and receivers are supported now (see
+  example_multiple_src.m). Updated analysis tools: scene, plot_ir, plot_irspec.
